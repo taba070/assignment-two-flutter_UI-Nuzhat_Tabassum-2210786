@@ -69,6 +69,18 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
+// ---------------- HELPER: SHOW SNACKBAR ON TAP ----------------
+
+void showTapMessage(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 1),
+      backgroundColor: Colors.indigo,
+    ),
+  );
+}
+
 // ---------------- COMMON TOP BAR (Welcome back, STUDENT NAME) ----------------
 
 class TopBar extends StatelessWidget {
@@ -96,22 +108,25 @@ class TopBar extends StatelessWidget {
             ),
           ],
         ),
-        Stack(
-          children: [
-            const Icon(Icons.notifications_none, size: 28),
-            Positioned(
-              right: 0,
-              top: 0,
-              child: Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
+        GestureDetector(
+          onTap: () => showTapMessage(context, "No new notifications"),
+          child: Stack(
+            children: [
+              const Icon(Icons.notifications_none, size: 28),
+              Positioned(
+                right: 0,
+                top: 0,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -155,10 +170,13 @@ class HomePage extends StatelessWidget {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text("Total Balance",
+                      children: [
+                        const Text("Total Balance",
                             style: TextStyle(color: Colors.white70, fontSize: 14)),
-                        Icon(Icons.copy, color: Colors.white70, size: 18),
+                        GestureDetector(
+                          onTap: () => showTapMessage(context, "Balance copied"),
+                          child: const Icon(Icons.copy, color: Colors.white70, size: 18),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -182,22 +200,26 @@ class HomePage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _quickAction(Icons.swap_vert, "Transfer"),
-                  _quickAction(Icons.receipt_long, "Pay Bills"),
-                  _quickAction(Icons.trending_up, "Invest"),
+                  _quickAction(context, Icons.swap_vert, "Transfer"),
+                  _quickAction(context, Icons.receipt_long, "Pay Bills"),
+                  _quickAction(context, Icons.trending_up, "Invest"),
                 ],
               ),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text("Recent Transactions",
+                children: [
+                  const Text("Recent Transactions",
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  Text("View All", style: TextStyle(color: Colors.indigo)),
+                  GestureDetector(
+                    onTap: () => showTapMessage(context, "Showing all transactions"),
+                    child: const Text("View All", style: TextStyle(color: Colors.indigo)),
+                  ),
                 ],
               ),
               const SizedBox(height: 10),
               ...transactions.map((t) => _transactionTile(
+                    context,
                     t["title"]!,
                     t["sub"]!,
                     t["amount"]!,
@@ -209,48 +231,54 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _quickAction(IconData icon, String label) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 24,
-          backgroundColor: Colors.indigo.shade50,
-          child: Icon(icon, color: Colors.indigo),
-        ),
-        const SizedBox(height: 6),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
+  Widget _quickAction(BuildContext context, IconData icon, String label) {
+    return GestureDetector(
+      onTap: () => showTapMessage(context, "$label tapped"),
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 24,
+            backgroundColor: Colors.indigo.shade50,
+            child: Icon(icon, color: Colors.indigo),
+          ),
+          const SizedBox(height: 6),
+          Text(label, style: const TextStyle(fontSize: 12)),
+        ],
+      ),
     );
   }
 
-  Widget _transactionTile(String title, String sub, String amount) {
+  Widget _transactionTile(BuildContext context, String title, String sub, String amount) {
     final isNegative = amount.startsWith("-");
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.grey.shade200,
-            child: const Icon(Icons.shopping_bag_outlined, color: Colors.indigo, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-                Text(sub, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-              ],
+    return GestureDetector(
+      onTap: () => showTapMessage(context, "$title • $amount"),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.grey.shade200,
+              child: const Icon(Icons.shopping_bag_outlined, color: Colors.indigo, size: 20),
             ),
-          ),
-          Text(
-            amount,
-            style: TextStyle(
-              color: isNegative ? Colors.red : Colors.green,
-              fontWeight: FontWeight.bold,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+                  Text(sub, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                ],
+              ),
             ),
-          ),
-        ],
+            Text(
+              amount,
+              style: TextStyle(
+                color: isNegative ? Colors.red : Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -339,42 +367,45 @@ class CardsPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _cardAction(Icons.block, "Block"),
-                  _cardAction(Icons.credit_card, "Details"),
-                  _cardAction(Icons.info_outline, "Limit"),
+                  _cardAction(context, Icons.block, "Block"),
+                  _cardAction(context, Icons.credit_card, "Details"),
+                  _cardAction(context, Icons.info_outline, "Limit"),
                 ],
               ),
               const SizedBox(height: 24),
               const Text("Linked Accounts",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(color: Colors.grey.shade200, blurRadius: 4),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    const CircleAvatar(
-                      backgroundColor: Colors.indigo,
-                      child: Text("S", style: TextStyle(color: Colors.white)),
-                    ),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Shared Savings", style: TextStyle(fontWeight: FontWeight.w600)),
-                          Text("\$5,500.00", style: TextStyle(color: Colors.grey)),
-                        ],
+              GestureDetector(
+                onTap: () => showTapMessage(context, "Opening Shared Savings"),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(color: Colors.grey.shade200, blurRadius: 4),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        backgroundColor: Colors.indigo,
+                        child: Text("S", style: TextStyle(color: Colors.white)),
                       ),
-                    ),
-                    const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-                  ],
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Shared Savings", style: TextStyle(fontWeight: FontWeight.w600)),
+                            Text("\$5,500.00", style: TextStyle(color: Colors.grey)),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -384,17 +415,20 @@ class CardsPage extends StatelessWidget {
     );
   }
 
-  Widget _cardAction(IconData icon, String label) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 24,
-          backgroundColor: Colors.indigo.shade50,
-          child: Icon(icon, color: Colors.indigo),
-        ),
-        const SizedBox(height: 6),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
+  Widget _cardAction(BuildContext context, IconData icon, String label) {
+    return GestureDetector(
+      onTap: () => showTapMessage(context, "$label tapped"),
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 24,
+            backgroundColor: Colors.indigo.shade50,
+            child: Icon(icon, color: Colors.indigo),
+          ),
+          const SizedBox(height: 6),
+          Text(label, style: const TextStyle(fontSize: 12)),
+        ],
+      ),
     );
   }
 }
