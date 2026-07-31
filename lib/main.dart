@@ -141,11 +141,11 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final transactions = [
-      {"title": "Netflix Subscription", "sub": "Entertainment • Today", "amount": "-\$19.99"},
-      {"title": "Coffee Shop", "sub": "Food & Drink • Today", "amount": "-\$4.50"},
-      {"title": "Salary Deposit", "sub": "Income • Yesterday", "amount": "+\$3500.00"},
-      {"title": "Grocery Store", "sub": "Shopping • Yesterday", "amount": "-\$55.80"},
-      {"title": "Amazon Purchase", "sub": "Shopping • 2 days ago", "amount": "-\$120.45"},
+      {"title": "Netflix Subscription", "sub": "Entertainment • Today", "amount": "-৳19.99"},
+      {"title": "Coffee Shop", "sub": "Food & Drink • Today", "amount": "-৳4.50"},
+      {"title": "Salary Deposit", "sub": "Income • Yesterday", "amount": "+৳3500.00"},
+      {"title": "Grocery Store", "sub": "Shopping • Yesterday", "amount": "-৳55.80"},
+      {"title": "Amazon Purchase", "sub": "Shopping • 2 days ago", "amount": "-৳120.45"},
     ];
 
     return SafeArea(
@@ -180,15 +180,15 @@ class HomePage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text("\$8,945.32",
+                    const Text("৳8,945.32",
                         style: TextStyle(
                             color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
-                        Text("Savings: \$5,500", style: TextStyle(color: Colors.white70)),
-                        Text("Last 30 days: +\$300 →",
+                        Text("Savings: ৳5,500", style: TextStyle(color: Colors.white70)),
+                        Text("Last 30 days: +৳300 →",
                             style: TextStyle(color: Colors.white70)),
                       ],
                     ),
@@ -399,7 +399,7 @@ class CardsPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("Shared Savings", style: TextStyle(fontWeight: FontWeight.w600)),
-                            Text("\$5,500.00", style: TextStyle(color: Colors.grey)),
+                            Text("৳5,500.00", style: TextStyle(color: Colors.grey)),
                           ],
                         ),
                       ),
